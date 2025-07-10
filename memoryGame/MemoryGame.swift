@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct MemoryGame <CardContent> {
+struct MemoryGame <CardContent> where CardContent: Equatable {
     private(set) var cards: Array<Card>
     
     init(numberOfPairsOfCards: Int, cardContentFactory: (Int) -> CardContent) {
@@ -16,8 +16,8 @@ struct MemoryGame <CardContent> {
         // add numberOfPairsOfCards x 2 cards
         for pairIndex in 0..<max(2, numberOfPairsOfCards) {
             let content = cardContentFactory(pairIndex)
-            cards.append(Card(content: content))
-            cards.append(Card(content: content))
+            cards.append(Card(content: content, id: "\(pairIndex+1)a"))
+            cards.append(Card(content: content, id: "\(pairIndex+1)b"))
         }
     }
     
@@ -30,9 +30,14 @@ struct MemoryGame <CardContent> {
         print(cards)
     }
     
-    struct Card {
+    struct Card: Equatable, Identifiable, CustomDebugStringConvertible {
         var isFaceUp = true
         var IsMatched = false
         let content: CardContent
+        
+        var id: String
+        var debugDescription: String {
+            "\(id): \(content) \(isFaceUp ? "up":"down") \(IsMatched ? "matched" : "")"
+        }
     }
 }
